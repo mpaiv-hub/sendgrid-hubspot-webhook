@@ -47,13 +47,24 @@ function mapStatus(sendgridEvent) {
 }
 
 export default async function handler(req, res) {
+   // Only SendGrid should call this endpoint (POST). Browsers often hit it as GET.
+  if (req.method !== "POST") {
+    res.setHeader("Allow", "POST");
+    return res.status(405).send("Method Not Allowed");
+  }
   try {
     // 1) Read raw body
     const rawBody = await getRawBody(req);
+    if (!rawBody || rawBody.length === 0) {
+      return res.status(400).send("Missing request body");
+    }
 
     // 2) Verify SendGrid signature
     const signature = req.headers[EventWebhookHeader.SIGNATURE().toLowerCase()];
     const timestamp = req.headers[EventWebhookHeader.TIMESTAMP().toLowerCase()];
+    if (!signature || !timestamp) {
+      return res.status(401).send("Missing SendGrid signature headers");
+    }
 
     const ew = new EventWebhook();
     const publicKey = ew.convertPublicKeyToECDSA(process.env.SENDGRID_WEBHOOK_PUBLIC_KEY);
