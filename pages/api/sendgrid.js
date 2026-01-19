@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { EventWebhook, EventWebhookHeader } from "@sendgrid/eventwebhook";
 
 // IMPORTANT: Vercel must give us the raw request body (not parsed JSON)

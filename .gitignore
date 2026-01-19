@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# next.js build output
+.next/
+
+# system files
+.DS_Store
+
+# logs
+npm-debug.log*
+yarn-debug.log*
